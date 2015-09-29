@@ -8,22 +8,20 @@ Imagen = applycform(Imagen, makecform('srgb2lab'));
 [h, w, p] = size(Imagen);
 ImagenAuxiliar = padarray(Imagen, [1 1]);
 k = 1;
-cont = 0;
+Regions = zeros(h + 2 , w + 2);
 for Y = 2: (h + 1)
    for X = 2: (w + 1) 
         for i = Y - 1:Y + 1
             for j = X - 1:X + 1
-                P1 = ImagenAuxiliar(InicioY, X, 1:3);
+                P1 = ImagenAuxiliar(2, 7, 1:3);
                 P2 = ImagenAuxiliar(i, j, 1:3);
                 Distancia(k, 1) = DistEuclideana(P1, P2);   
                 if Distancia(k, 1) <= 8
-                    cont = cont + 1;
+                    Regions(i , j) = 1;
                 end
                 k = k + 1;
             end
         end
    end
 end
-
-cont
 disp(Distancia(1:9, :))
