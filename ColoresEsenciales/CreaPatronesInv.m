@@ -10,7 +10,6 @@ function img = CreaPatronesInv(r, c, x)
             img(i, j, 3) = x(f, cnt + 2); 
             f=f+1;
         end
-        
     end
     img = uint8(img);
 end

@@ -10,14 +10,19 @@
 % MatrizCentroides: vector con centroides asociados a su clase
 %%
 function MatrizCentroides = AsignaCentroides(Clases, Centroides)
-    [RowClas, ColClas] = size(Clases);
-    [Row, Col] = size(Centroides);
-    MatrizCentroides = zeros(RowClas, Col);
-    for i = 1 : RowClas
-        for j = 1 : Row
-            if Clases(i) == j
-                MatrizCentroides(i, :) = Centroides(j, :);
-            end
-        end
-    end
+   % [RowClas, ColClas] = size(Clases);
+   % [Row, Col] = size(Centroides);
+  
+%     for i = 1 : RowClas
+%         for j = 1 : Row
+%             if Clases(i) == j
+%                 MatrizCentroides(i, :) = Centroides(j, :);
+%             end
+%         end
+%     end
+    n = length(Clases);
+    MatrizCentroides = zeros(n, 3);
+    for i=1:n
+        MatrizCentroides(i,:) = Centroides(Clases(i),:);
+    end 
 end

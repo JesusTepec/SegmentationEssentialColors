@@ -1,22 +1,30 @@
-
-Imagen = imread('../images/65019.jpg');
+close all
+vectorImages = {'124084', '35070', '140075', '302003', '296059', '176035', '25098', '45096', '295087', '388016'};
+Imagen = imread(strcat('../images/',vectorImages{2},'.jpg'));
 figure, imshow(Imagen)
 Imagen = rgb2lab(Imagen);
 
-%Imagen = applycform(Imagen, makecform('srgb2lab'));
 [h, w, p] = size(Imagen);
 [PatronesImagen h, w]= CreaPatrones(Imagen);
-k = 16;
+k = 8;
 ci = centinit(k, PatronesImagen);
 [Clases, Centroides, SumDistancias, Distancias] = kmeans(PatronesImagen,...
     k,'MaxIter',1000,'Distance','city','Start', ci,'EmptyAction','singleton');
-
+centroides = CalculaRegiones(Clases, Centroides, 5, k);
 MatrizCentroides = AsignaCentroides(Clases, Centroides);
+MatrizCentroides2 = AsignaCentroides(Clases, centroides);
+
 ImagenClases = CreaPatronesInv(h, w, MatrizCentroides);
-%ImagenCalses = applycform(ImagenClases, makecform('lab2srgb'));
+ImagenClases2 = CreaPatronesInv(h, w, MatrizCentroides2);
+
 ImagenClases = double(ImagenClases);
 ImagenClases = lab2rgb(ImagenClases);
-figure, imshow(ImagenClases);
+
+ImagenClases2 = double(ImagenClases2);
+ImagenClases2 = lab2rgb(ImagenClases2);
+
+figure ,imshow(ImagenClases), title('K-means');
+figure ,imshow(ImagenClases2), title('CIE');
  
 %Ordenar el vector de clases, calcular la frecuencia de cada clase, colocar
 %el vector de frecuencias junto con el vector de centroides, ordenar este
