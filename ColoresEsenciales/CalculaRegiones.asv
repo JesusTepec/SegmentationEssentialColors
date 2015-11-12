@@ -28,15 +28,14 @@ function  Centroides = CalculaRegiones(ClasesIniciales, Centroides, Tolerancia, 
         %    end
         elseif Distancia > Tolerancia
                 if j < k
-                    j = j + 1;
+                    j = j + 1
                 else
                     i = i + 1;
                     j = i + 1;
                 end
         end
     end
-    Centroides = sortrows(DatosOrdenados, 5);
-    Centroides = Centroides(:, 1:3);
+    
                 
                 
 %     while convergencia ~= 1
@@ -92,10 +91,10 @@ function  Centroides = CalculaRegiones(ClasesIniciales, Centroides, Tolerancia, 
 %         NuevosCentroides(2, 1:3) = P;
 %     end
 %     disp(NuevosCentroides);
-% [h,w] = size(DatosOrdenados);
-%     disp(h);
-%     disp(NuevosCentroides);
-%    Centroides = NuevosCentroides;
+[h,w] = size(DatosOrdenados);
+    disp(h);
+    disp(NuevosCentroides);
+   Centroides = NuevosCentroides;
 end
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)

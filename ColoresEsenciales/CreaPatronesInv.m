@@ -2,7 +2,6 @@ function img = CreaPatronesInv(r, c, x)
     img = zeros(r, c, 3);
     cnt = 1;
     f=1;
-    r * c;
     for i=1:r,
         for j=1:c,
             img(i, j, 1) = x(f, cnt);
