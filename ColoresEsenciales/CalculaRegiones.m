@@ -16,6 +16,7 @@ function  Centroides = CalculaRegiones(ClasesIniciales, Centroides, Tolerancia, 
             j = j + 1;
         elseif Distancia <= Tolerancia
                 promedio = (DatosOrdenados(i, 1:3) + DatosOrdenados(j, 1:3))/2;
+              % promedio = DatosOrdenados(j, 1:3);
                 DatosOrdenados(i, 1:3) = promedio;
                 DatosOrdenados(j, 1:3) = promedio;
                 frecuencia = DatosOrdenados(i, 4) + DatosOrdenados(j, 4); 
