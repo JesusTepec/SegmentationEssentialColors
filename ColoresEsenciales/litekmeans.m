@@ -34,31 +34,30 @@ end
 pos_diff = 1.;
 
 % main loop until
-%while pos_diff > 0.0
-for z=1:100
-    z
-%     S=mcovar([data;centroid]);
-%     Sinv = pinv(S);
-%     Dis = mahal(data, centroid);
+while pos_diff > 0.0
+%for z=1:100
+    
+     S=mcovar([data;centroid]);
+     Sinv = pinv(S);
+
   % E-Step
   assignment = [];
   % assign each datapoint to the closest centroid
   tam = length( data(:, 1) );
   for d = 1 : tam;
 
-%    min_diff = ( data( d, :) - centroid( 1,:) );
-  min_diff = de2000(data( d, :) , centroid( 1,:));
-%     min_diff = Dis(d, :);
+    min_diff = ( data( d, :) - centroid( 1,:) );
+ % min_diff = de2000(data( d, :) , centroid( 1,:));
   %  min_diff = min_diff * min_diff';
-%   min_diff = min_diff * Sinv * min_diff';
+   min_diff = min_diff * Sinv * min_diff';
 %     curAssignment = 1;
 
     for c = 2 : nbCluster;
-   % diff2c = ( data( d, :) - centroid( c,:) );
-   diff2c = de2000(data( d, :) ,centroid( c,:));
+    diff2c = ( data( d, :) - centroid( c,:) );
+  % diff2c = de2000(data( d, :) ,centroid( c,:));
  %     diff2c = Dis(d,:);
-   %   diff2c = diff2c * diff2c';
-%   diff2c = diff2c * Sinv * diff2c';
+  %    diff2c = diff2c * diff2c';
+   diff2c = diff2c * Sinv * diff2c';
 
       if( min_diff >= diff2c)
         curAssignment = c;

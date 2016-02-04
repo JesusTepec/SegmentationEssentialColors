@@ -3,7 +3,7 @@ clear
 
 %% Select Image
 
-Filter={'*.jpg;*.jpeg;*.png'};
+Filter={'*.jpg;*.jpeg;*.png;*.tif'};
 
 [FileName, FilePath]=uigetfile(Filter);
 pause(0.01);
@@ -13,71 +13,88 @@ if FileName==0
 end
 
 FullFileName=[FilePath FileName];
-%% Number of Desired Colors
+% %% Number of Desired Colors
 
 ANSWER = inputdlg('Number of desired colors:','Color Reduction',1,{'16'});
 pause(0.01);
 
 k = str2double(ANSWER{1});
 %% Load Image Data
-vectorImages = {'124084','35070',  '140075', '302003', '296059', '176035',...
-                '25098', '242078', '45096',  '295087', '388016', '19021',...
-                '2092',  '86000',  '293029', '65019',  '189003', '56028',...  
-                '372047','test',   '60079',  '350 58',  '41004',  '41004-2',...
-                '210088','3096',   'Plain',  'f4ce3'};
 Imagen1 = imread(strcat(FullFileName));
-%Imagen = rgb2lab(Imagen1);
-Imagen = rgb2hsi(Imagen1);
-figure, imshow(Imagen(:,:,1))
-figure, imshow(Imagen(:,:,2))
-figure, imshow(Imagen(:,:,3))
-
+x = Imagen1;
+Imagen1=imfilter(Imagen1,fspecial('average',3));
+%Imagen1 = cerradura(Imagen1, 1);
+Imagen = rgb2lab(Imagen1);
+%Imagen = Imagen1;
+%% Reduction image
 [h, w, p] = size(Imagen);
 [PatronesImagen h, w]= CreaPatrones(Imagen);
-PatronesImagen
-ci = centinit(k, PatronesImagen);
-  [Clases, Centroides, SumDistancias, Distancias] = kmeans(PatronesImagen,...
-  k,'MaxIter',1000,'Distance', 'sqeuclidean', 'Start', ci,'EmptyAction','singleton');
-
-%[Clases, Centroides] = kmeansexp(PatronesImagen, k);
-%Dt = pdist(Centroides);
-%prom = std(Dt)
-Tolerancia = 0.12
+ ci = centinit(k, PatronesImagen);
+[Clases, Centroides, SumDistancias, Distancias] = kmeans(PatronesImagen,...
+    k,'MaxIter',1000,'Distance', 'city', 'Start', ci,'EmptyAction','singleton');
+%[Clases, Centroides, ~]= litekmeans(PatronesImagen, k)
+a = var(Centroides(:))
+Tolerancia = a / k + kurtosis(Centroides(:)) 
 disp('saliendo de kmeans');
 centroides = CalculaRegiones(Clases, Centroides, Tolerancia, k);
-
 disp('fin de recalculando centroides')
 MatrizCentroides = AsignaCentroides(Clases, centroides);
 ImagenClases = CreaPatronesInv(h, w, MatrizCentroides);
 
  M = AsignaCentroides(Clases, Centroides);
- I = CreaPatronesInv(h, w, M);
-
-IC = double(I);
-IC= hsi2rgb(IC);
+ IC = CreaPatronesInv(h, w, M);
+hg = ImagenClases;
+IC = double(IC);
+IC= lab2rgb(IC);
+[Nc,~]= groupCount(centroides);
+perimeters=imperim(hg,uint8(centroides), Nc);
+    obj=x;
+    for i=1:Nc,
+        obj=imoverlay(obj,perimeters(:,:,i),[.3 1 .3]);
+    end
+    figure, imshow(obj);
 ImagenClases = double(ImagenClases);
-%ImagenClases = lab2rgb(ImagenClases);
-ImagenClases = hsi2rgb(ImagenClases);
-Imagen = hsi2rgb(Imagen);
-%% Show Results
-figure, imshow(Imagen)
+ImagenClases = lab2rgb(ImagenClases);
+ y = double(im2uint8(ImagenClases));
+
+%% Show Results  
+
 figure;
 subplot(1,2,1);
 imshow(IC);
-title('K-means');
+title([FileName '  K-means K = ' num2str(k) ' ']);
 
 subplot(1,2,2);
 imshow(ImagenClases); 
-title(['Color Reduced Image (T = ' num2str(Tolerancia) ') using euclidian and de2000' ]);
+title(['Reduccion de colores (T = ' num2str(Tolerancia) ') Reduccion a ' num2str(Nc) ' colores']);
+x = double (x);
+     sample = zeros(size(x,1),size(x,2));
+     sample(1:3:end,1:3:end) = 1;
+
+     R = x(:,:,1); Rx = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+     G = x(:,:,2); Gx = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+     B = x(:,:,3); Bx = B(sample==1); Bn = randn( numel(Rx),1 )/3;
+     
+    
+     figure, 
+     subplot(221), imshow(uint8(x)), axis image; title('input image')
+     subplot(223), imshow(obj), axis image; title('output image')
+     subplot(222)
+     scatter3( round(Rx(:)-Rn), round(Gx(:)-Gn),round( Bx(:)-Bn), 3, [ Rx(:), Gx(:), Bx(:) ]/255 );
+     title('Pixel Distribution Before Meanshift')
+     xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
+
+     R = y(:,:,1); Ry = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+     G = y(:,:,2); Gy = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+     B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
+     subplot(224)
+     scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
+     title('Pixel Distribution After Meanshift')
+     xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
+
+%%
 
 
-% a = bwperim(im2bw(ImagenClases, graythresh(rgb2gray(ImagenClases))));
-% figure, imshow(a);
+
  
-%Ordenar el vector de clases, calcular la frecuencia de cada clase, colocar
-%el vector de frecuencias junto con el vector de centroides, ordenar este
-%ultimo de menor a mayor, Comparar los centroides de menor frecuencia con
-%el resto de los centroides aderir este nuevo a la clase sea más parecida
-%o de menor distancia, cumpliendo tambien con cierto valor de tolerancia en
-%función de su distancia
-%Obtener el numero de colores finales agrupar iguales.
+
