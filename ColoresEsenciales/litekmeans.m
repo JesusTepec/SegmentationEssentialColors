@@ -1,4 +1,4 @@
-function[assignment, centroid, pointsInCluster]= litekmeans(data, nbCluster)
+function [assignment, centroid, pointsInCluster] = litekmeans(data, nbCluster)
 % usage
 % function[centroid, pointsInCluster, assignment]=
 % myKmeans(data, nbCluster)
