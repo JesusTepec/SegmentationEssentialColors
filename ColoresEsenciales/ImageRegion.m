@@ -52,7 +52,7 @@ title([FileName '  K-means K = ' num2str(k) ' ']);
 
 subplot(1,2,2);
 imshow(ImagenFinal); 
-title(['Reduccion de colores (T = ' num2str(Tolerancia) ') Reduccion a ' num2str(numeroColores) ' <col />ores']);
+title(['Reduccion de colores (T = ' num2str(Tolerancia) ') Reduccion a ' num2str(numeroColores) 'colores']);
 x = double (ImagenOriginal);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;
