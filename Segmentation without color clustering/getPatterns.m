@@ -1,5 +1,5 @@
 
-function patterns = ObtenerPatrones(Image)
+function patterns = getPatterns(Image)
 %%  
 % Uso: [Patrones, Alto, Ancho] = CreaPatrones(Imagen)
 % 
