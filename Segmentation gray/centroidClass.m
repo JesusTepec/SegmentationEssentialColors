@@ -14,16 +14,10 @@ function centroidsMatrix = centroidClass(clases, centroids)
 %
     n = length(clases);
     if(size(centroids, 2) == 1)
-       [RowClas, ColClas] = size(clases);
-       [Row, Col] = size(centroids);
-
-        for i = 1 : RowClas
-            for j = 1 : Row
-                if clases(i) == j
-                    centroidsMatrix(i, :) = centroids(j, :);
-                end
-            end
-        end
+        centroidsMatrix = zeros(n, 1);
+        for i = 1:n
+            centroidsMatrix(i, :) = centroids(clases(i), :);
+        end 
     else
         centroidsMatrix = zeros(n, 3);
         for i = 1:n

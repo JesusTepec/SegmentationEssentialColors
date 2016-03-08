@@ -1,6 +1,6 @@
 % Segmentacion k means, sin reagrupamiento
-% close all
-% clear
+close all
+clear
 %% Select Image
 Filter={'*.jpg;*.jpeg;*.png;*.tif'};
 [FileName, FilePath]=uigetfile(Filter);
@@ -14,17 +14,18 @@ ANSWER = inputdlg('Number of desired colors for k means:','k means',1,{'16'});
 k = str2double(ANSWER{1});
 %% Load Image Data
 originalImage = imread(strcat(FullFileName));
+originalImage = rgb2gray(originalImage);
+whos originalImage;
 filtImage = imfilter(originalImage,fspecial('average',3));
-%imageLab = rgb2lab(filtImage);
 [h, w, p] = size(originalImage);
 %% Get patterns of the image 
-imagePatterns = getPatterns(originalImage);
+imagePatterns = getPatterns(filtImage);
 initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
 [ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
 k,'MaxIter',1000,'Distance', 'city','EmptyAction','singleton');
 %% reconstruction of the image
-x = centroidClass(ClasesKmeans, CentroidsKmeans)
+x = centroidClass(ClasesKmeans, CentroidsKmeans);
 IC = getPixeles(h, w, x);
 
 %% perimeters
@@ -33,9 +34,6 @@ imageRounded = originalImage;
 for i=1:k,
     segmentos = imoverlay(imageRounded, perimeters(:, :, i), [.3 1 .3]);
 end
-%% return to RGB
-% IC = double(IC);
-% IC = lab2rgb(IC);
 %% Show Results 
 figure, imshow(segmentos); 
 

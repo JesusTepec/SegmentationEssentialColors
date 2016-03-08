@@ -12,11 +12,11 @@ function patterns = getPatterns(Image)
 % 
     if(size(Image, 3) == 1)
         [h,w] = size(Image);
-        patterns = [Image(:)];
+        patterns = zeros(h*w,1);
         k = 1;
         for i = 1:h,
             for j=1:w,
-                paterns(k,1)=Image(i,j);
+                patterns(k,1)=Image(i,j);
                 k = k+1;
             end
         end
