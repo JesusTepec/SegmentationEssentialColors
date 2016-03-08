@@ -1,5 +1,4 @@
-function  Centroides = getImageRegion(InitialCentroids, Centroides, Tolerancia, k)
-% function Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k)
+function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k)
     Clases = sort(ClasesIniciales);
     Frecuencias = hist(Clases, k);
     datos = [Centroides, Frecuencias', (1:k)'];

@@ -21,10 +21,11 @@ filtImage = imfilter(originalImage,fspecial('average',3));
 imagePatterns = getPatterns(originalImage);
 initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
-[ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns'),...
+[ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
 k,'MaxIter',1000,'Distance', 'city','EmptyAction','singleton');
 %% reconstruction of the image
-IC = getPixeles(h, w, centroidClass(ClasesKmeans, CentroidsKmeans));
+x = centroidClass(ClasesKmeans, CentroidsKmeans)
+IC = getPixeles(h, w, x);
 
 %% perimeters
 perimeters = imperim(IC, uint8(CentroidsKmeans), k);
@@ -37,7 +38,7 @@ end
 % IC = lab2rgb(IC);
 %% Show Results 
 figure, imshow(segmentos); 
-y = double(im2uint8(IC));
+
 figure;
 subplot(1,2,1);
 imshow(originalImage);
@@ -45,14 +46,3 @@ title([FileName ' Original Image']);
 subplot(1,2,2);
 imshow(IC); 
 title(['Segmentation with k means k = ' num2str(k) ', without reclustering']);
-x = double (originalImage);
-sample = zeros(size(x,1),size(x,2));
-sample(1:3:end,1:3:end) = 1;
-R = x(:,:,1); Rx = R(sample==1); Rn = randn( numel(Rx),1 )/3;
-% G = x(:,:,2); Gx = G(sample==1); Gn = randn( numel(Rx),1 )/3;
-% B = x(:,:,3); Bx = B(sample==1); Bn = randn( numel(Rx),1 )/3;       
-figure, 
-imshow(uint8(x))
-
-figure, 
-imshow(IC);

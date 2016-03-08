@@ -7,7 +7,7 @@ cent=permute(centroids,[1 3 2]);
 for k=1:colors,
     for i=1:row,
         for j=1:col
-            c(i,j,k)=isequal(im(i,j,:),cent(k,:,:));
+            c(i,j,k)=isequal(im(i,j,1:3),cent(k,:,1:3));
         end
     end
     c(:,:,k)=bwareaopen(c(:,:,k),1000);
