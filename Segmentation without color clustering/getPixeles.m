@@ -20,6 +20,6 @@ function img = getPixeles(r, c, x)
             img = [img ; permute(ima, [3 1 2])];
         end
         img=uint8(img);
-          imshow(img)
+      %    imshow(img)
     end
 end

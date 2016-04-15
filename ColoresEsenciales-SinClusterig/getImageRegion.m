@@ -2,26 +2,23 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     Clases = sort(ClasesIniciales);
     Frecuencias = hist(Clases, k);
     datos = [Centroides, Frecuencias', (1:k)'];
-    DatosOrdenados = sortrows(datos, 3); 
+    DatosOrdenados = sortrows(datos, 1); 
     i = 1;
     j = 2;
     while i < k
-        S=mcovar(DatosOrdenados(:,1));
-        Sinv = pinv(S);
-        Distancia = (DatosOrdenados(i, 1) - DatosOrdenados(j, 1));
-        Distancia = Distancia * Sinv * Distancia';
+        Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
         if Distancia == 0
             i = i + 1;
             j = j + 1;
         elseif Distancia <= Tolerancia
-            promedio = (DatosOrdenados(i, 1) + DatosOrdenados(j, 1)) / 2;
-            DatosOrdenados(i, 1) = promedio;
-            DatosOrdenados(j, 1) = promedio;
-            frecuencia = DatosOrdenados(i, 2) + DatosOrdenados(j, 2); 
+            promedio = (DatosOrdenados(i, 1:3) + DatosOrdenados(j, 1:3)) / 2;
+            DatosOrdenados(i, 1:3) = promedio;
+            DatosOrdenados(j, 1:3) = promedio;
+            frecuencia = DatosOrdenados(i, 4) + DatosOrdenados(j, 4); 
             DatosOrdenados = Cambiartodos(DatosOrdenados, promedio, frecuencia, j);
-            DatosOrdenados(i, 2) = frecuencia;
-            DatosOrdenados(j, 2) = frecuencia;
-            DatosOrdenados = sortrows(DatosOrdenados, 2);
+            DatosOrdenados(i, 4) = frecuencia;
+            DatosOrdenados(j, 4) = frecuencia;
+            DatosOrdenados = sortrows(DatosOrdenados, 4);
             i = 1;
             j = 2;
         elseif Distancia > Tolerancia
@@ -33,14 +30,13 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
             end
         end
     end
-    Centroides = sortrows(DatosOrdenados, 3);
-    Centroides = Centroides(:, 1);
+    Centroides = sortrows(DatosOrdenados, 5);
+    Centroides = Centroides(:, 1:3);
 end
 
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)
     MatrizOrdenada = sortrows(Matriz, NumeroColumna);
 end
-
 
 

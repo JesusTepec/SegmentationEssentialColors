@@ -1,0 +1,253 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ImageRegion</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-03-03"><meta name="DC.source" content="ImageRegion.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Select Image</a></li><li><a href="#3">Number of Desired Colors</a></li><li><a href="#4">Load Image Data</a></li><li><a href="#5">Reduction image</a></li><li><a href="#9">perimetros, rodear segmentos</a></li><li><a href="#11">Show Results</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>
+clear
+</pre><h2>Select Image<a name="2"></a></h2><pre class="codeinput">Filter={<span class="string">'*.jpg;*.jpeg;*.png;*.tif'</span>};
+[FileName, FilePath]=uigetfile(Filter);
+pause(0.01);
+<span class="keyword">if</span> FileName == 0
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+FullFileName=[FilePath FileName];
+</pre><h2>Number of Desired Colors<a name="3"></a></h2><pre class="codeinput">ANSWER = inputdlg(<span class="string">'Centroides para Kmeans:'</span>,<span class="string">'K-means'</span>,1,{<span class="string">'16'</span>});
+k = str2double(ANSWER{1});
+</pre><h2>Load Image Data<a name="4"></a></h2><pre class="codeinput">ImagenOriginal = imread(strcat(FullFileName));
+ImagenFiltrada = imfilter(ImagenOriginal,fspecial(<span class="string">'average'</span>,3));
+ImagenLab = rgb2lab(ImagenFiltrada);
+</pre><h2>Reduction image<a name="5"></a></h2><pre class="codeinput">[h, w, p] = size(ImagenOriginal);
+PatronesImagen = CreaPatrones(ImagenLab);
+centroidesIniciales = centinit(k, PatronesImagen);
+
+[ClasesKmeans, CentroidesKmeans, ~, ~] = kmeans(PatronesImagen,<span class="keyword">...</span>
+k,<span class="string">'MaxIter'</span>,1000,<span class="string">'Distance'</span>, <span class="string">'city'</span>, <span class="string">'Start'</span>, centroidesIniciales,<span class="string">'EmptyAction'</span>,<span class="string">'singleton'</span>);
+</pre><pre class="codeinput">varianza = var(CentroidesKmeans(:))
+kurtosis = kurtosis(CentroidesKmeans(:))
+media = median(CentroidesKmeans(:))
+Tolerancia = (varianza / k) + kurtosis
+</pre><pre class="codeoutput">
+varianza =
+
+   1.1801e+03
+
+
+kurtosis =
+
+    2.3567
+
+
+media =
+
+   10.8063
+
+
+Tolerancia =
+
+   20.7957
+
+</pre><pre class="codeinput">disp(<span class="string">'saliendo de kmeans'</span>);
+coloresResultantes = CalculaRegiones(ClasesKmeans, CentroidesKmeans, Tolerancia, k);
+disp(<span class="string">'fin de recalculando centroides'</span>)
+ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, coloresResultantes));
+</pre><pre class="codeoutput">saliendo de kmeans
+</pre><pre class="codeoutput error">Index exceeds matrix dimensions.
+
+Error in CalculaRegiones (line 9)
+        Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+
+Error in ImageRegion (line 32)
+coloresResultantes = CalculaRegiones(ClasesKmeans, CentroidesKmeans, Tolerancia, k);
+</pre><pre class="codeinput">IC = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, CentroidesKmeans));
+IC = double(IC);
+IC = lab2rgb(IC);
+</pre><h2>perimetros, rodear segmentos<a name="9"></a></h2><pre class="codeinput">[numeroColores, ~] = groupCount(coloresResultantes);
+perimeters = imperim(ImagenReconstruida, uint8(coloresResultantes), numeroColores);
+segmentos = ImagenOriginal;
+<span class="keyword">for</span> i=1:numeroColores,
+    segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
+<span class="keyword">end</span>
+</pre><pre class="codeinput">ImagenFinal = lab2rgb(double(ImagenReconstruida));
+y = double(im2uint8(ImagenFinal));
+</pre><h2>Show Results<a name="11"></a></h2><pre class="codeinput">figure, imshow(segmentos);
+figure;
+subplot(1,2,1);
+imshow(IC);
+title([FileName <span class="string">'  K-means K = '</span> num2str(k) <span class="string">' '</span>]);
+
+subplot(1,2,2);
+imshow(ImagenFinal);
+title([<span class="string">'Reduccion de colores (T = '</span> num2str(Tolerancia) <span class="string">') Reduccion a '</span> num2str(numeroColores) <span class="string">' colores'</span>]);
+x = double (ImagenOriginal);
+sample = zeros(size(x,1),size(x,2));
+sample(1:3:end,1:3:end) = 1;
+
+R = x(:,:,1); Rx = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+G = x(:,:,2); Gx = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+B = x(:,:,3); Bx = B(sample==1); Bn = randn( numel(Rx),1 )/3;
+
+figure,
+subplot(121), imshow(uint8(x)), axis <span class="string">image</span>; title(<span class="string">'input image'</span>)
+subplot(122)
+scatter3( round(Rx(:)-Rn), round(Gx(:)-Gn),round( Bx(:)-Bn), 3, [ Rx(:), Gx(:), Bx(:) ]/255 );
+title(<span class="string">'Distribuci&Atilde;&sup3;n de pixeles antes Agrupar Colores'</span>)
+xlim([0,255]),ylim([0,255]),zlim([0,255]);axis <span class="string">square</span>
+figure,
+subplot(121), imshow(segmentos), axis <span class="string">image</span>; title(<span class="string">'output image'</span>)
+R = y(:,:,1); Ry = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+G = y(:,:,2); Gy = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
+subplot(122)
+scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
+title(<span class="string">'Distribucion de pixeles antes Agrupar Colores'</span>)
+xlim([0,255]),ylim([0,255]),zlim([0,255]);axis <span class="string">square</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+close all
+clear
+%% Select Image
+Filter={'*.jpg;*.jpeg;*.png;*.tif'};
+[FileName, FilePath]=uigetfile(Filter);
+pause(0.01);
+if FileName == 0
+    return;
+end
+FullFileName=[FilePath FileName];
+%% Number of Desired Colors
+ANSWER = inputdlg('Centroides para Kmeans:','K-means',1,{'16'});
+k = str2double(ANSWER{1});
+%% Load Image Data
+ImagenOriginal = imread(strcat(FullFileName));
+ImagenFiltrada = imfilter(ImagenOriginal,fspecial('average',3));
+ImagenLab = rgb2lab(ImagenFiltrada);
+%% Reduction image
+[h, w, p] = size(ImagenOriginal);
+PatronesImagen = CreaPatrones(ImagenLab);
+centroidesIniciales = centinit(k, PatronesImagen);
+
+[ClasesKmeans, CentroidesKmeans, ~, ~] = kmeans(PatronesImagen,...
+k,'MaxIter',1000,'Distance', 'city', 'Start', centroidesIniciales,'EmptyAction','singleton');
+%%
+varianza = var(CentroidesKmeans(:))
+kurtosis = kurtosis(CentroidesKmeans(:))
+media = median(CentroidesKmeans(:))
+Tolerancia = (varianza / k) + kurtosis
+%%
+disp('saliendo de kmeans');
+coloresResultantes = CalculaRegiones(ClasesKmeans, CentroidesKmeans, Tolerancia, k);
+disp('fin de recalculando centroides')
+ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, coloresResultantes));
+%%
+IC = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, CentroidesKmeans));
+IC = double(IC);
+IC = lab2rgb(IC);
+%% perimetros, rodear segmentos
+[numeroColores, ~] = groupCount(coloresResultantes);
+perimeters = imperim(ImagenReconstruida, uint8(coloresResultantes), numeroColores);
+segmentos = ImagenOriginal;
+for i=1:numeroColores,
+    segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
+end
+%%
+ImagenFinal = lab2rgb(double(ImagenReconstruida));
+y = double(im2uint8(ImagenFinal));
+%% Show Results 
+figure, imshow(segmentos); 
+figure;
+subplot(1,2,1);
+imshow(IC);
+title([FileName '  K-means K = ' num2str(k) ' ']);
+
+subplot(1,2,2);
+imshow(ImagenFinal); 
+title(['Reduccion de colores (T = ' num2str(Tolerancia) ') Reduccion a ' num2str(numeroColores) ' colores']);
+x = double (ImagenOriginal);
+sample = zeros(size(x,1),size(x,2));
+sample(1:3:end,1:3:end) = 1;
+
+R = x(:,:,1); Rx = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+G = x(:,:,2); Gx = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+B = x(:,:,3); Bx = B(sample==1); Bn = randn( numel(Rx),1 )/3;   
+    
+figure, 
+subplot(121), imshow(uint8(x)), axis image; title('input image')
+subplot(122)
+scatter3( round(Rx(:)-Rn), round(Gx(:)-Gn),round( Bx(:)-Bn), 3, [ Rx(:), Gx(:), Bx(:) ]/255 );
+title('DistribuciÃ³n de pixeles antes Agrupar Colores')
+xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
+figure, 
+subplot(121), imshow(segmentos), axis image; title('output image')
+R = y(:,:,1); Ry = R(sample==1); Rn = randn( numel(Rx),1 )/3;
+G = y(:,:,2); Gy = G(sample==1); Gn = randn( numel(Rx),1 )/3;
+B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
+subplot(122)
+scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
+title('Distribucion de pixeles antes Agrupar Colores')
+xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
+
+##### SOURCE END #####
+--></body></html>

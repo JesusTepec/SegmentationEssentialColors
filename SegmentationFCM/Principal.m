@@ -1,4 +1,4 @@
-% Segmentacion k means, sin reagrupamiento
+% fcm
 close all
 clear
 %% Select Image
@@ -22,13 +22,13 @@ imagePatterns = getPatterns(imageLab);
 initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
 opts = [nan;nan;nan;0];
-[CentroidsKmeans, U, ~] = fcm(imagePatterns, k, opts);
+[CentroidsKmeans, U, ~] = fcm(double(imagePatterns), k, opts);
 U(: ,h * w + 1) = CentroidsKmeans(:,1);
 U(: ,h * w + 1) = [];
 [~ ,ClasesKmeans ]= max(U);
 %% reconstruction of the image
 IC = getPixeles(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
-
+k
 %% perimeters
 perimeters = imperim(IC, uint8(CentroidsKmeans), k);
 imageRounded = originalImage;
@@ -70,3 +70,4 @@ subplot(122)
 scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
 title('Distribucion de pixeles antes Agrupar Colores')
 xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
+imwrite(IC, 'Reagrupig2.jpg');
