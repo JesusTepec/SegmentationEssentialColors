@@ -14,7 +14,6 @@ if FileName == 0
 end
 FullFileName=[FilePath FileName];
 
-
 originalImage =  imread(strcat(FullFileName));
 filtImage = imfilter(originalImage,fspecial('average',3));
 %imageLab = rgb2lab(filtImage);
@@ -34,7 +33,7 @@ threshold = (variance / k) + kurtosis
 
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
-resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, 15, k);
+resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, 1, k);
 disp('fin de recalculando centroides')
 ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, resultColors));
 %%
