@@ -15,23 +15,25 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     DatosOrdenados = sortrows(datos, 1); 
     i = 1;
     j = 2;
-    while i < k
-        %% Distance by DeltaE200        
-     %   Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
-        %% Distance euclidian
-      %  Distancia = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
-        %% Mahalanobis
-        %S = mcovar(DatosOrdenados(:,1:3));
-        %Sinv = pinv(S);
-%         min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
-%         Distancia = min_diff * Sinv * min_diff';
-        S = cov(DatosOrdenados(:,1:3));
-        
-        mu = mean(DatosOrdenados(:,1:3), 1);
-
-        Distancia = (DatosOrdenados(i, 1:3)-mu)*inv(S)*(DatosOrdenados(i, 1:3)-mu)';
-       % Distancia = ((DatosOrdenados(i, 1:3)-mu) / S) * (DatosOrdenados(i, 1:3)-mu)';
-
+    I = 0;
+    while  i < k
+        I = I + 1;
+        if( I > 10000000)
+            i = k
+        end
+       %% Distance by DeltaE200        
+    %  Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+       %% Distance euclidian
+%       Distancia = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
+       %% Mahalanobis
+        S = mcovar(DatosOrdenados(:,1:3));
+        Sinv = pinv(S);
+        min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
+        Distancia = min_diff * Sinv * min_diff';
+%       S = cov(DatosOrdenados(:,1:3));        
+%       mu = mean(DatosOrdenados(:,1:3), 1);
+%       Distancia = (DatosOrdenados(i, 1:3)-mu)*inv(S)*(DatosOrdenados(i, 1:3)-mu)';
+%       Distancia = ((DatosOrdenados(i, 1:3)-mu) / S) * (DatosOrdenados(i, 1:3)-mu)';
         %% 
         if Distancia == 0
             i = i + 1;
@@ -58,8 +60,9 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     end
     Centroides = sortrows(DatosOrdenados, 5);
     Centroides = Centroides(:, 1:3);
+    disp(I); %quitar
+    disp(i);
 end
-
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)
     MatrizOrdenada = sortrows(Matriz, NumeroColumna);
