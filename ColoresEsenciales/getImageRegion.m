@@ -60,8 +60,6 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     end
     Centroides = sortrows(DatosOrdenados, 5);
     Centroides = Centroides(:, 1:3);
-    disp(I); %quitar
-    disp(i);
 end
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)

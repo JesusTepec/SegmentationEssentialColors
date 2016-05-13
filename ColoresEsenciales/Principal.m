@@ -30,18 +30,18 @@ variance = var(CentroidsKmeans(:))
 kurtosis = kurtosis(CentroidsKmeans(:))
 mean = median(CentroidsKmeans(:))
 threshold = (variance / k) + kurtosis
-t2 = mean / (variance/k)
+t2 = mean / (variance/k) 
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
 resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, t2, k);
 disp('fin de recalculando centroides')
-ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, resultColors));
+ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(resultColors)));
 %%
 %IC = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
 % IC = double(IC);
 % IC = lab2rgb(IC);
 %% perimetros, rodear segmentos
-[t, u, i, c] = groupCount(uint8(resultColors));
+[t, u, i, c] = groupCount((resultColors));
 perimeters = imperim(ImagenReconstruida, uint8(u), t);
 segmentos = originalImage;
 for i=1:t,
