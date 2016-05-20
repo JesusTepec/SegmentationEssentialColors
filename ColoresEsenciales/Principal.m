@@ -6,7 +6,7 @@ clear
 ANSWER = inputdlg('Number of desired colors for k means:','k means',1,{'16'});
 k = str2double(ANSWER{1});
 %% Load Image Data
-Filter={'*.jpg;*.jpeg;*.png;*.tiff'};
+Filter={'*.jpg;*.jpeg;*.png;*.tiff;*.tif'};
 [FileName, FilePath]=uigetfile(Filter);
 pause(0.01);
 if FileName == 0
