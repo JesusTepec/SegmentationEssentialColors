@@ -36,14 +36,15 @@ z = 0
 % main loop until
  S=mcovar([data;centroid]);
      Sinv = pinv(S);  
-while pos_diff > 0.0 && z < 5000
+while pos_diff > 0.0 && z < 2000
 %for z=1:100
-  z = z + 1;
+  z = z + 1
   % E-Step
   assignment = [];
   % assign each datapoint to the closest centroid
   tam = length( data(:, 1) );
   for d = 1 : tam;
+
     min_diff = ( data( d, :) - centroid( 1,:) );
  % min_diff = de2000(data( d, :) , centroid( 1,:));
   %  min_diff = min_diff * min_diff';
