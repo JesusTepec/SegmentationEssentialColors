@@ -1,4 +1,4 @@
-% Kmeans con reagrupamiento 
+% Kmeans con reagrupamiento -probado en lab -probando RGB con mahalanobis
 close all
 clear
 datetime
@@ -7,8 +7,9 @@ datetime
 ANSWER = inputdlg('Number of desired colors for k means:','k means',1,{'16'});
 k = str2double(ANSWER{1});
 %% Load Image Data
+    
 Filter={'*.jpg;*.jpeg;*.png;*.tiff;*.tif'};
-[FileName, FilePath]=uigetfile(Filter);
+[FileName, FilePath] = uigetfile(Filter);
 pause(0.01);
 if FileName == 0
     return;
@@ -16,49 +17,44 @@ end
 FullFileName=[FilePath FileName];
 
 originalImage =  imread(strcat(FullFileName));
-filtImage = imfilter(originalImage,fspecial('average',3));
-%imageLab = rgb2lab(filtImage);
-imageLab = filtImage;
-[h, w, p] = size(originalImage);
+image = imfilter(originalImage,fspecial('average',3));
+%image = rgb2lab(image);
+[h, w, p] = size(image);
 %% Get patterns of the image 
-imagePatterns = CreaPatrones(imageLab);
-%initialCentroids = centinit(k, imagePatterns);
+imagePatterns = CreaPatrones(image);
+initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
-[ClasesKmeans, CentroidsKmeans, ~] = litekmeans(double(imagePatterns), k);
-% [ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
-% k,'MaxIter',1000,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
+%[ClasesKmeans, CentroidsKmeans, ~] = litekmeans(double(imagePatterns), k);
+[ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
+k,'MaxIter',5000,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
 %% Get parameters for the clustering with cuantification and  Segmentation
-variance = var(CentroidsKmeans(:))
 kurtosis = kurtosis(CentroidsKmeans(:))
-mean = median(CentroidsKmeans(:))
-threshold = (variance / k) 
-skewness = skewness(CentroidsKmeans(:))
-desviasion = std(CentroidsKmeans(:))
-t1 = 1;
+threshold = (var(CentroidsKmeans(:)) / k) 
+t1 = 12;
 if(threshold > 25)
-    t1 = ((mean / desviasion)+ kurtosis)
+   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
 end
 t2 = (threshold + kurtosis) / t1
 
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
-resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, t2, k);
+imagePatterns = getImageRegion(ClasesKmeans, CentroidsKmeans, t2 /20 , k);
 disp('fin de recalculando centroides')
-ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(resultColors)));
+ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(imagePatterns)));
 %%
 %IC = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
 % IC = double(IC);
 % IC = lab2rgb(IC);
 %% perimetros, rodear segmentos
-[t, u, i, c] = groupCount(uint8(resultColors));
+[t, u, i, c] = groupCount(uint8(imagePatterns));
 perimeters = imperim(ImagenReconstruida, uint8(u), t);
 segmentos = originalImage;
 for i=1:t,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
 end
 %%%
-% %ImagenFinal = lab2rgb(double(ImagenReconstruida));
-% ImagenFinal = ImagenReconstruida;
+% ImagenFinal = lab2rgb(double(ImagenReconstruida));
+%ImagenReconstruida = ImagenFinal;
 y = double(im2uint8(ImagenReconstruida));
 %% Show Results 
 figure, imshow(segmentos); 
@@ -69,7 +65,7 @@ figure, imshow(segmentos);
 % 
 % subplot(1,2,2);
 figure, imshow(ImagenReconstruida); 
-title(['Reduccion de colores (T = ' num2str(t2) ') Reduccion a ' num2str(t) ' colores']);
+title(['Reduccion de colores (T = ' num2str(t2 / 20) ') Reduccion a ' num2str(t) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;

@@ -12,28 +12,21 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     Clases = sort(ClasesIniciales);
     Frecuencias = hist(Clases, k);
     datos = [Centroides, Frecuencias', (1:k)'];
-    DatosOrdenados = sortrows(datos, 1); 
+    DatosOrdenados = sortrows(datos, 4); 
     i = 1;
     j = 2;
     I = 0;
     while  i < k
-        I = I + 1;
-        if( I > 10000000)
-            i = k
-        end
+
        %% Distance by DeltaE200        
-        Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+      %  Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
        %% Distance euclidian
 %       Distancia = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
        %% Mahalanobis
-%         S = mcovar(DatosOrdenados(:,1:3));
-%         Sinv = pinv(S);
-%         min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
-%         Distancia = min_diff * Sinv * min_diff';
-%       S = cov(DatosOrdenados(:,1:3));        
-%       mu = mean(DatosOrdenados(:,1:3), 1);
-%       Distancia = (DatosOrdenados(i, 1:3)-mu)*inv(S)*(DatosOrdenados(i, 1:3)-mu)';
-%       Distancia = ((DatosOrdenados(i, 1:3)-mu) / S) * (DatosOrdenados(i, 1:3)-mu)';
+        S = mcovar(DatosOrdenados(:,1:3));
+        Sinv = pinv(S);
+        min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
+        Distancia = min_diff * Sinv * min_diff';
         %% 
         if Distancia == 0
             i = i + 1;

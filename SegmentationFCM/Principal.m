@@ -23,8 +23,9 @@ initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
 opts = [nan;nan;nan;0];
 [CentroidsKmeans, U, ~] = fcm(double(imagePatterns), k, opts);
-U(: ,h * w + 1) = CentroidsKmeans(:,1);
-U(: ,h * w + 1) = [];
+% U(: ,h * w + 1) = CentroidsKmeans(:,1);
+% U = sortrows(U, h * w + 1);
+% U(: ,h * w + 1) = [];
 [~ ,ClasesKmeans ]= max(U);
 %% reconstruction of the image
 IC = getPixeles(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));

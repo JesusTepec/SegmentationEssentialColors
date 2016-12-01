@@ -12,15 +12,12 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     Clases = sort(ClasesIniciales);
     Frecuencias = hist(Clases, k);
     datos = [Centroides, Frecuencias', (1:k)'];
-    DatosOrdenados = sortrows(datos, 1); 
+    DatosOrdenados = sortrows(datos, 4); 
     i = 1;
     j = 2;
     I = 0;
-    while  i < k
-        I = I + 1;
-        if( I > 10000)
-            i = k
-        end
+    while  I < k;
+        I = I + 1; 
        %% Distance by DeltaE200        
     %  Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
        %% Distance euclidian
@@ -57,11 +54,11 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
                 j = i + 1;
             end
         end
+        disp(i);
     end
     Centroides = sortrows(DatosOrdenados, 5);
     Centroides = Centroides(:, 1:3);
-    disp(I); %quitar
-    disp(i);
+    
 end
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)
