@@ -12,7 +12,6 @@ FullFileName=[FilePath FileName];
 %% Number of Desired Colors, value of k
 ANSWER = inputdlg('Number of desired colors for k means:','k means',1,{'16'});
 k = str2double(ANSWER{1});
-datetime
 %% Load Image Data
 originalImage = imread(strcat(FullFileName));
 filtImage = imfilter(originalImage,fspecial('average',3));
@@ -28,21 +27,14 @@ opts = [nan;nan;nan;0];
 U(: ,h * w + 1) = CentroidsKmeans(:,1);
 U(: ,h * w + 1) = [];
 [~ ,ClasesKmeans ]= max(U);
-%% Get parameters for the clustering with cuantification and  Segmentation treshold
-% varience = var(CentroidsKmeans(:))
-% kurtosis = kurtosis(CentroidsKmeans(:))
-% mean = median(CentroidsKmeans(:))
-% threshold = (varience / k) + kurtosis
+%% Get parameters for the clustering with cuantification and  Segmentation t
+varience = var(CentroidsKmeans(:))
 kurtosis = kurtosis(CentroidsKmeans(:))
-threshold = (var(CentroidsKmeans(:)) / k) 
-t1 = 0.3;
-if(threshold > 1.5)
-   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis);
-end
-t2 = (threshold + kurtosis) / t1
+mean = median(CentroidsKmeans(:))
+threshold = (varience / k) + kurtosis
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
-resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, t2/15, k);
+resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, threshold, k);
 disp('fin de recalculando centroides')
 ImagenReconstruida = getPixeles(h, w, AsignaCentroides(ClasesKmeans, resultColors));
 %%
@@ -71,7 +63,7 @@ title([FileName '  K-means K = ' num2str(k) ' ']);
 
 subplot(1,2,2);
 imshow(ImagenReconstruida); 
-title(['Reduccion de colores (T = ' num2str(t2/15) ') Reduccion a ' num2str(numeroColores) ' colores']);
+title(['Reduccion de colores (T = ' num2str(threshold) ') Reduccion a ' num2str(numeroColores) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;
@@ -95,4 +87,3 @@ subplot(122)
 scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
 title('Distribucion de pixeles antes Agrupar Colores')
 xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
-datetime

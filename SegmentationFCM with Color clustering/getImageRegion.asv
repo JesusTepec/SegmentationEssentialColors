@@ -7,12 +7,12 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     j = 2;
     while i < k
 %         Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
-        %% Mahalanobis
+         %% Mahalanobis
         S = mcovar(DatosOrdenados(:,1:3));
         Sinv = pinv(S);
         min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
         Distancia = min_diff * Sinv * min_diff';
-        %% fin mahalanobis
+        %% 
         if Distancia == 0
             i = i + 1;
             j = j + 1;

@@ -1,4 +1,5 @@
-% Kmeans con reagrupamiento -probado en lab -probando RGB con mahalanobis
+% Kmeans con reagrupamiento -probando LAB con mahalanobis 65 para lab 15
+% RGB
 close all
 clear
 datetime
@@ -18,7 +19,7 @@ FullFileName=[FilePath FileName];
 
 originalImage =  imread(strcat(FullFileName));
 image = imfilter(originalImage,fspecial('average',3));
-%image = rgb2lab(image);
+image = rgb2lab(image);
 [h, w, p] = size(image);
 %% Get patterns of the image 
 imagePatterns = CreaPatrones(image);
@@ -30,15 +31,15 @@ k,'MaxIter',5000,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyActi
 %% Get parameters for the clustering with cuantification and  Segmentation
 kurtosis = kurtosis(CentroidsKmeans(:))
 threshold = (var(CentroidsKmeans(:)) / k) 
-t1 = 0.3;
-if(threshold > (1.5 * 15))
-   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
+t1 = 1;
+if(threshold > 25)
+   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis);
 end
 t2 = (threshold + kurtosis) / t1
 
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
-imagePatterns = getImageRegion(ClasesKmeans, CentroidsKmeans, t2 / 15, k);
+imagePatterns = getImageRegion(ClasesKmeans, CentroidsKmeans, t2 , k);
 disp('fin de recalculando centroides')
 ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(imagePatterns)));
 %%
@@ -47,13 +48,15 @@ ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(
 % IC = lab2rgb(IC);
 %% perimetros, rodear segmentos
 [t, u, i, c] = groupCount(uint8(imagePatterns));
-perimeters = imperim(ImagenReconstruida, uint8(u), t);
+
+perimeters = imperim(ImagenReconstruida, uint8(u(:,1:3)), t);
 segmentos = originalImage;
 for i=1:t,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
 end
 %%%
-% ImagenFinal = lab2rgb(double(ImagenReconstruida));
+ labImage = ImagenReconstruida;
+ImagenReconstruida = lab2rgb(double(ImagenReconstruida));
 %ImagenReconstruida = ImagenFinal;
 y = double(im2uint8(ImagenReconstruida));
 %% Show Results 
@@ -65,7 +68,7 @@ figure, imshow(segmentos);
 % 
 % subplot(1,2,2);
 figure, imshow(ImagenReconstruida); 
-title(['Reduccion de colores (T = ' num2str(t2 / 15) ') Reduccion a ' num2str(t) ' colores']);
+title(['Reduccion de colores (T = ' num2str(t2) ') Reduccion a ' num2str(t) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;
