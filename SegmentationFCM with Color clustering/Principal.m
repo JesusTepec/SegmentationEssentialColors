@@ -28,30 +28,31 @@ opts = [nan;nan;nan;0];
 U(: ,h * w + 1) = CentroidsKmeans(:,1);
 U(: ,h * w + 1) = [];
 [~ ,ClasesKmeans ]= max(U);
-%% Get parameters for the clustering with cuantification and  Segmentation treshold
-% varience = var(CentroidsKmeans(:))
-% kurtosis = kurtosis(CentroidsKmeans(:))
-% mean = median(CentroidsKmeans(:))
-% threshold = (varience / k) + kurtosis
+%% Get parameters for the clustering with cuantification and  Segmentation
 kurtosis = kurtosis(CentroidsKmeans(:))
-threshold = (var(CentroidsKmeans(:)) / k) 
-t1 = 0.3;
-if(threshold > 1.5)
-   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis);
+dk = k;
+if(kurtosis < 2)
+    dk = k + 100;
+end
+threshold = (var(CentroidsKmeans(:)) / dk) 
+t1 = 1;
+if(threshold > 25)
+   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
 end
 t2 = (threshold + kurtosis) / t1
+threshold = t2;
 %% Segmentation for patters recognition
 disp('saliendo de kmeans');
-resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, t2/15, k);
+resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, threshold/15, k);
 disp('fin de recalculando centroides')
-ImagenReconstruida = getPixeles(h, w, AsignaCentroides(ClasesKmeans, resultColors));
+ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(resultColors)));
 %%
 IC = getPixeles(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
 % IC = double(IC);
 % IC = lab2rgb(IC);
 %% perimetros, rodear segmentos
-[numeroColores, ~] = groupCount(resultColors);
-perimeters = imperim(ImagenReconstruida, uint8(resultColors), numeroColores);
+[numeroColores, u] = groupCount(resultColors);
+perimeters = imperim(ImagenReconstruida, uint8(u(:,1:3)), numeroColores);
 segmentos = originalImage;
 for i=1:numeroColores,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
@@ -64,14 +65,9 @@ y = double(ImagenReconstruida);
 
 %% Show Results 
 figure, imshow(segmentos); 
-figure;
-subplot(1,2,1);
-imshow(IC);
-title([FileName '  K-means K = ' num2str(k) ' ']);
-
-subplot(1,2,2);
+figure,
 imshow(ImagenReconstruida); 
-title(['Reduccion de colores (T = ' num2str(t2/15) ') Reduccion a ' num2str(numeroColores) ' colores']);
+title(['Reduccion de colores (T = ' num2str(threshold/15) ') Reduccion a ' num2str(numeroColores) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;
@@ -93,6 +89,6 @@ G = y(:,:,2); Gy = G(sample==1); Gn = randn( numel(Rx),1 )/3;
 B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
 subplot(122)
 scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
-title('Distribucion de pixeles antes Agrupar Colores')
+title('Distribucion de pixeles después de Agrupar Colores')
 xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
 datetime
