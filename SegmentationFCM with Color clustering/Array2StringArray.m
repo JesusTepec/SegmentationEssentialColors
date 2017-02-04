@@ -1,6 +1,6 @@
 function Array2StringArray(matriz, t)
 %     matriz = im2uint8(lab2rgb(double(matriz(:, 1:3))));
-    matriz = (matriz(:, 1:3));
+    matriz = uint8(matriz(:, 1:3));
     matriz = sortrows(matriz, 1);
     matriz = sortrows(matriz, 2);
     matriz = sortrows(matriz, 3);

@@ -16,21 +16,17 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     i = 1;
     j = 2;
     I = 0;
-    while  I < k;
-        I = I + 1; 
+%     while  i < k
+    while i < k        
        %% Distance by DeltaE200        
-    %  Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+%         Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
        %% Distance euclidian
-%       Distancia = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
+        Distancia = sqrt((sum(DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3)))^2);
        %% Mahalanobis
-        S = mcovar(DatosOrdenados(:,1:3));
-        Sinv = pinv(S);
-        min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
-        Distancia = min_diff * Sinv * min_diff';
-%       S = cov(DatosOrdenados(:,1:3));        
-%       mu = mean(DatosOrdenados(:,1:3), 1);
-%       Distancia = (DatosOrdenados(i, 1:3)-mu)*inv(S)*(DatosOrdenados(i, 1:3)-mu)';
-%       Distancia = ((DatosOrdenados(i, 1:3)-mu) / S) * (DatosOrdenados(i, 1:3)-mu)';
+%         S = mcovar(DatosOrdenados(:,1:3));
+%         Sinv = pinv(S);
+%         min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
+%         Distancia = min_diff * Sinv * min_diff';
         %% 
         if Distancia == 0
             i = i + 1;
@@ -54,11 +50,11 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
                 j = i + 1;
             end
         end
-        disp(i);
     end
     Centroides = sortrows(DatosOrdenados, 5);
     Centroides = Centroides(:, 1:3);
-    
+    disp('fin de agrupamiento');
+    disp(i);
 end
 
 function MatrizOrdenada = Ordenar(Matriz, NumeroColumna)

@@ -15,13 +15,13 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     DatosOrdenados = sortrows(datos, 4); 
     i = 1;
     j = 2;
-    I = 0;
+%     I = 0;
     while  i < k
-
+        
        %% Distance by DeltaE200        
-        Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+%          Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
        %% Distance euclidian
-%       Distancia = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);
+       Distancia = sqrt((sum(DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3)))^2);
        %% Mahalanobis
 %         S = mcovar(DatosOrdenados(:,1:3));
 %         Sinv = pinv(S);

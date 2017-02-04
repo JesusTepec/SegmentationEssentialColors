@@ -16,7 +16,7 @@ datetime
 %% Load Image Data
 originalImage = imread(strcat(FullFileName));
 filtImage = imfilter(originalImage,fspecial('average',3));
-%imageLab = rgb2lab(filtImage);
+imageLab = rgb2lab(filtImage);
 [h, w, p] = size(originalImage);
 imageLab = double(originalImage);
 %% Get patterns of the image 
@@ -30,7 +30,11 @@ U(: ,h * w + 1) = [];
 [~ ,ClasesKmeans ]= max(U);
 %% Get parameters for the clustering with cuantification and  Segmentation
 kurtosis = kurtosis(CentroidsKmeans(:))
-threshold = (var(CentroidsKmeans(:)) / k) 
+dk = k;
+if(kurtosis < 2)
+    dk = k + 100;
+end
+threshold = (var(CentroidsKmeans(:)) / dk) 
 t1 = 1;
 if(threshold > 25)
    t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
@@ -47,8 +51,8 @@ IC = getPixeles(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
 % IC = double(IC);
 % IC = lab2rgb(IC);
 %% perimetros, rodear segmentos
-[numeroColores, ~] = groupCount(resultColors);
-perimeters = imperim(ImagenReconstruida, uint8(resultColors), numeroColores);
+[numeroColores, u] = groupCount(resultColors);
+perimeters = imperim(ImagenReconstruida, uint8(u(:,1:3)), numeroColores);
 segmentos = originalImage;
 for i=1:numeroColores,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
@@ -86,5 +90,5 @@ B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
 subplot(122)
 scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
 title('Distribucion de pixeles después de Agrupar Colores')
-xlim([0,255]),ylim([0,255]),zlim([0,255]);axis circle
+xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
 datetime

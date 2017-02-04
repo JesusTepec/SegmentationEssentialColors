@@ -25,12 +25,9 @@ image = imfilter(originalImage,fspecial('average',3));
 imagePatterns = CreaPatrones(image);
 initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
-[t, u, ~, ClasesKmeans] = groupCount(CreaPatrones(image));
-CentroidsKmeans = double(u(:,1:3));
-disp('end of group uniques');
 %[ClasesKmeans, CentroidsKmeans, ~] = litekmeans(double(imagePatterns), k);
-% % [ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
-% k,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
+[ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
+k,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
 %% Get parameters for the clustering with cuantification and  Segmentation
 kurtosis = kurtosis(CentroidsKmeans(:))
 threshold = (var(CentroidsKmeans(:)) / k) 
@@ -39,11 +36,10 @@ if(threshold > 35)
    t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
 end
 t2 = (threshold + kurtosis) / t1
-t2 = 26;
 %% Segmentation for patters recognition
-% disp('saliendo de kmeans');
+disp('saliendo de kmeans');
 datetime
-imagePatterns = getImageRegion(ClasesKmeans, CentroidsKmeans, t2, t);
+imagePatterns = getImageRegion(ClasesKmeans, CentroidsKmeans, t2, k);
 disp('fin de recalculando centroides')
 ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(imagePatterns)));
 %%

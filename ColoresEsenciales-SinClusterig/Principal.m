@@ -14,18 +14,18 @@ image = imfilter(originalImage,fspecial('average',3));
 
 %% Get patterns of the image 
 [t, u, i, c] = groupCount(CreaPatrones(image));
+CentroidsKmeans = double(u(:,1:3));
 disp('end of group uniques');
 %% Tolerancia 
-CentroidsKmeans = double(u(:,1:3));
-variance = var(CentroidsKmeans(:))
 kurtosis = kurtosis(CentroidsKmeans(:))
-mean = median(CentroidsKmeans(:))
-threshold = (variance / k) 
-skewness = skewness(CentroidsKmeans(:))
-desviasion = std(CentroidsKmeans(:))
-t1 = 1;
-if(threshold > 25)
-    t1 = ((mean / desviasion)+ kurtosis)
+dk = k;
+if(kurtosis < 2)
+    dk = k + 100;
+end
+threshold = (var(CentroidsKmeans(:)) / dk) 
+t1 = 0.15;
+if(threshold > 45)
+   t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
 end
 t2 = (threshold + kurtosis) / t1
 %% Segmentation for patters recognition
@@ -34,26 +34,21 @@ disp('fin de recalculando centroides')
 ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(c, resultColors));
 imshow(ImagenReconstruida);
 %% perimetros, rodear segmentos
-[numeroColores, ~, ~, ~] = groupCount(resultColors);
-perimeters = imperim(ImagenReconstruida, uint8(resultColors), numeroColores);
+[numeroColores, u, ~, ~] = groupCount(resultColors);
+perimeters = imperim(ImagenReconstruida, uint8(u(:,1:3)), numeroColores);
 segmentos = originalImage;
 for i=1:numeroColores,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
 end
 %%
 %ImagenFinal = lab2rgb(double(ImagenReconstruida));
-ImagenFinal = ImagenReconstruida;
-y = double(im2uint8(ImagenFinal));
+
+y = double(im2uint8(ImagenReconstruida));
 %% Show Results 
 figure, imshow(segmentos); 
-figure;
-subplot(1,2,1);
-imshow(IC);
-title([FileName '  K-means K = ' num2str(k) ' ']);
-
-subplot(1,2,2);
-imshow(ImagenFinal); 
-title(['Reduccion de colores (T = ' num2str(threshold) ') Reduccion a ' num2str(numeroColores) ' colores']);
+figure,
+imshow(ImagenReconstruida); 
+title(['Reduccion de colores (T = ' num2str(k) ') Reduccion a ' num2str(numeroColores) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
 sample(1:3:end,1:3:end) = 1;
@@ -70,12 +65,11 @@ title('Distribucion de pixeles antes Agrupar Colores')
 xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
 figure, 
 subplot(121), imshow(segmentos), axis image; title('output image')
-R = y(:,:,1); Ry = R(sample==1); Rn = randn( numel(Rx),1 )/3;   
+R = y(:,:,1); Ry = R(sample==1); Rn = randn( numel(Rx),1 )/3;
 G = y(:,:,2); Gy = G(sample==1); Gn = randn( numel(Rx),1 )/3;
 B = y(:,:,3); By = B(sample==1); Bn = randn( numel(Rx),1 )/3;
 subplot(122)
 scatter3( round(Ry(:)-Rn), round(Gy(:)-Gn), round(By(:)-Bn), 3, [ Rx(:), Gx(:), By(:) ]/255 );
-title('Distribucion de pixeles antes Agrupar Colores')
+title('Distribucion de pixeles después de Agrupar Colores')
 xlim([0,255]),ylim([0,255]),zlim([0,255]);axis square
 datetime
-% imwrite(ImagenFinal, 'Reagrupig.jpg');
