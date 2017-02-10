@@ -25,12 +25,12 @@ image = imfilter(originalImage,fspecial('average',3));
 imagePatterns = CreaPatrones(image);
 initialCentroids = centinit(k, imagePatterns);
 %% Clustering of colors using k means
-[t, u, ~, ClasesKmeans] = groupCount(CreaPatrones(image));
-CentroidsKmeans = double(u(:,1:3));
-disp('end of group uniques');
+% [t, u, ~, ClasesKmeans] = groupCount(CreaPatrones(image));
+% CentroidsKmeans = double(u(:,1:3));
+% disp('end of group uniques');
 %[ClasesKmeans, CentroidsKmeans, ~] = litekmeans(double(imagePatterns), k);
-% % [ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
-% k,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
+[ClasesKmeans, CentroidsKmeans, ~, ~] = kmeans(double(imagePatterns),...
+k,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
 %% Get parameters for the clustering with cuantification and  Segmentation
 kurtosis = kurtosis(CentroidsKmeans(:))
 threshold = (var(CentroidsKmeans(:)) / k) 

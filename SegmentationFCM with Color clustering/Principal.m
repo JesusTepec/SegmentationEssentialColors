@@ -16,7 +16,8 @@ datetime
 %% Load Image Data
 originalImage = imread(strcat(FullFileName));
 filtImage = imfilter(originalImage,fspecial('average',3));
-imageLab = rgb2lab(filtImage);
+% imageLab = rgb2lab(filtImage);
+imageLab = rgb2hsv(filtImage);
 [h, w, p] = size(originalImage);
 % imageLab = double(originalImage);
 %% Get patterns of the image 
@@ -35,40 +36,40 @@ if(kurtosis < 2)
     dk = k + 100;
 end
 threshold = (var(CentroidsKmeans(:)) / dk) 
-t1 = 1.3;
+t1 = 0.5;
 if(threshold > 25)
    t1 = ((median(CentroidsKmeans(:)) / std(CentroidsKmeans(:)))+ kurtosis)
 end
 t2 = (threshold + kurtosis) / t1
-threshold = t2;
+threshold = t2 / 30;
 %% Segmentation for patters recognition
 disp('saliendo de fcm');
 resultColors = getImageRegion(ClasesKmeans, CentroidsKmeans, threshold, k);
 disp('fin de recalculando centroides')
 ImagenReconstruida = CreaPatronesInv(h, w, AsignaCentroides(ClasesKmeans, uint8(resultColors)));
-%%
-% IC = getPixeles(h, w, AsignaCentroides(ClasesKmeans, CentroidsKmeans));
-% IC = double(IC);
-% IC = lab2rgb(IC);
-%% perimetros, rodear segmentos
-% numeroColores, u] = groupCount(resultColors); rgb
-[numeroColores, u] = groupCount(im2uint8(lab2rgb(resultColors))); %lab
 
-perimeters = imperim(ImagenReconstruida,uint8(rgb2lab(u(:,1:3))), numeroColores);
+%% perimetros, rodear segmentos
+[numeroColores, u] = groupCount(resultColors);
+%[numeroColores, u] = groupCount(im2uint8(lab2rgb(resultColors))); %lab
+
+%perimeters = imperim(ImagenReconstruida,uint8(rgb2lab(u(:,1:3))), numeroColores);
+perimeters = imperim(ImagenReconstruida,uint8(u(:,1:3)), numeroColores);
 segmentos = originalImage;
 for i=1:numeroColores,
     segmentos = imoverlay(segmentos, perimeters(:, :, i), [.3 1 .3]);
 end
 % %%
-  ImagenReconstruida = lab2rgb(double(ImagenReconstruida));
- y = double(im2uint8(ImagenReconstruida));
+%   ImagenReconstruida = lab2rgb(double(ImagenReconstruida));
+
+ImagenReconstruida = hsv2rgb(double(ImagenReconstruida));
+y = double(im2uint8(ImagenReconstruida));
 %% RGB
 % y = double(ImagenReconstruida);
 
 %% Show Results 
 figure, imshow(segmentos); 
 figure,
-imshow(ImagenReconstruida); 
+imshow(im2uint8(ImagenReconstruida)); 
 title(['Reduccion de colores (T = ' num2str(threshold) ') Reduccion a ' num2str(numeroColores) ' colores']);
 x = double (originalImage);
 sample = zeros(size(x,1),size(x,2));
