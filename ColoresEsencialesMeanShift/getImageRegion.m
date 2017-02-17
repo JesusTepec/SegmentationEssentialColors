@@ -1,4 +1,4 @@
-function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k)
+function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k, fnDistancia)
 %% Función de Agrupamiento
 % Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k)
 
@@ -7,6 +7,7 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
 % Vector de Centroides [r, g, b]
 % umbral de convergencia 
 % Número de centroides de vector de centroides
+% fnDistancia: 1->DE2000, 2->euclidian, 3->mahalanobis
 % Autor: Jesús Tepec
 %%
     Clases = sort(ClasesIniciales);
@@ -15,23 +16,29 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
     DatosOrdenados = sortrows(datos, 4); 
     i = 1;
     j = 2;
-    I = 0;
-    while  i < k
-
-       %% Distance by DeltaE200        
-%         Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
-       %% Distance euclidian
-%       Distancia = sqrt((sum(DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3)))^2);
-       %% Mahalanobis
-        S = mcovar(DatosOrdenados(:,1:3));
-        Sinv = pinv(S);
-        min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
-        Distancia = min_diff * Sinv * min_diff';
+    while  i < k 
+        %% Distance by DeltaE200 
+        if fnDistancia == 1
+          Distancia = deltaE2000(DatosOrdenados(i, 1:3), DatosOrdenados(j, 1:3));
+        end
+        %% Distance euclidian
+        if fnDistancia == 2
+          Distancia = sqrt((sum(DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3)))^2);
+        end
+        %% Mahalanobis
+        if fnDistancia == 3
+           S = mcovar(DatosOrdenados(:,1:3));
+           Sinv = pinv(S);
+           min_diff = DatosOrdenados(i, 1:3) - DatosOrdenados(j, 1:3);        
+           Distancia = min_diff * Sinv * min_diff';
+        end
         %% 
         if Distancia == 0
             i = i + 1;
             j = j + 1;
+%             disp('Iguanas');
         elseif Distancia <= Tolerancia
+%             disp('menor');
             promedio = (DatosOrdenados(i, 1:3) + DatosOrdenados(j, 1:3)) / 2;
             DatosOrdenados(i, 1:3) = promedio;
             DatosOrdenados(j, 1:3) = promedio;
@@ -43,6 +50,7 @@ function  Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k
             i = 1;
             j = 2;
         elseif Distancia > Tolerancia
+%             disp('mayor')
             if j < k
                 j = j + 1;
             else

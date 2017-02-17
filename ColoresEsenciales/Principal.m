@@ -1,5 +1,7 @@
 % Kmeans con reagrupamiento -probando LAB con mahalanobis 65 para lab 15
 % RGB
+
+
 close all
 clear
 datetime
