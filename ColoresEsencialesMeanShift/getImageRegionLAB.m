@@ -1,4 +1,4 @@
-function  [Centroides, I] = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k, fnDistancia, espacio)
+function  [Centroides, I] = getImageRegionLAB(ClasesIniciales, Centroides, Tolerancia, k, fnDistancia, espacio)
 %% Función de Agrupamiento
 % Centroides = getImageRegion(ClasesIniciales, Centroides, Tolerancia, k)
 
@@ -41,7 +41,8 @@ function  [Centroides, I] = getImageRegion(ClasesIniciales, Centroides, Toleranc
 %             disp('Iguanas');
         elseif Distancia <= Tolerancia
 %             disp('menor');
-            promedio = (DatosOrdenados(i, 1:3) + DatosOrdenados(j, 1:3)) / 2;
+            auxPromedio = (lab2rgb(double(DatosOrdenados(i, 1:3))) + lab2rgb(double(DatosOrdenados(j, 1:3)))) / 2;
+            promedio = rgb2lab(auxPromedio);
             DatosOrdenados(i, 1:3) = promedio;
             DatosOrdenados(j, 1:3) = promedio;
             frecuencia = DatosOrdenados(i, 4) + DatosOrdenados(j, 4); 

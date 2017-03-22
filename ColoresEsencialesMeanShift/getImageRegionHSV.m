@@ -41,7 +41,8 @@ function  [Centroides, I] = getImageRegion(ClasesIniciales, Centroides, Toleranc
 %             disp('Iguanas');
         elseif Distancia <= Tolerancia
 %             disp('menor');
-            promedio = (DatosOrdenados(i, 1:3) + DatosOrdenados(j, 1:3)) / 2;
+            auxPromedio = (hsv2rgb(double(DatosOrdenados(i, 1:3))) + hsv2rgb(double(DatosOrdenados(j, 1:3)))) / 2;
+            promedio = rgb2hsv(auxPromedio);
             DatosOrdenados(i, 1:3) = promedio;
             DatosOrdenados(j, 1:3) = promedio;
             frecuencia = DatosOrdenados(i, 4) + DatosOrdenados(j, 4); 

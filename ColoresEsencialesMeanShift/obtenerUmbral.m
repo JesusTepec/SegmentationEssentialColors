@@ -1,9 +1,12 @@
-function umbral = obtenerUmbral(centroides, k, divisor, maximo)
+function umbral = obtenerUmbral(centroides, k, divisor, maximo, minimo)
     kurt = kurtosis(centroides(:));
-    threshold = (var(centroides(:)) / k); 
-    t1 = divisor;
+    threshold = (var(centroides(:)) / k)
     if(threshold > maximo)
-       t1 = ((median(centroides(:)) / std(centroides(:)))+ kurt);
+       t1 = ((median(centroides(:)) / std(centroides(:)))+ kurt)
+       umbral = (threshold + kurt) / t1
+    elseif(threshold < minimo)
+        umbral = (threshold + kurt) / divisor
+    else
+        umbral = (threshold + kurt)   
     end
-    umbral = (threshold + kurt) / t1;
 end
