@@ -2,18 +2,19 @@ close all
 clear all
 clc
 rutaImagenes = 'C:\Users\Segmentación\Documents\MATLAB\SegmentationEssentialColors\Images';
-rutaGuardar = 'C:\Users\Segmentación\Google Drive\Experimentos\16';% cambiar carpeta por experimento
+rutaGuardar = 'C:\Users\Segmentación\Google Drive\Experimentos\17';% cambiar carpeta por experimento
 imagenes = {'113044.jpg', '225017.jpg', '385028.jpg', '388016.jpg', '35010.jpg', '24004.jpg', '295087.jpg', '176035.jpg', '181079.jpg', '296059.jpg', '124084.jpg', '163014.jpg', '101087.jpg', '35070.jpg', '42049.jpg', '253036.jpg', '45096.jpg', '60079.jpg', '135069.jpg', 'showimage.jpg', 'jouzawarusaidi1.jpg', 'descarga.png','test.jpg','DSC08913.jpg', 'cometa.jpg', 'micronuclueos.jpg'};
 Nombres = {'113044', '225017', '385028', '388016', '35010', '24004', '295087', '176035', '181079', '296059', '124084', '163014', '101087', '35070', '42049', '253036', '45096', '60079', '135069', 'showimage', 'jouzawarusaidi1', 'descarga' , 'test', 'DSC08913', 'cometa', 'micronucleos'};
 espacio = [0, 0, 1]; % [rgb, lab, hsv] no prender todos
 clustering = [0, 1, 0]; % [kmeans, fcm, meanshift]
-k = 30                                                                                                                                                                                                                         ;
-for iter = 26:26
+k = 128                                                                                                                                                                                                                         ;
+for iter = 12:25
     TiempoInicial = datetime
     %% Cargar imagne
     imagenOriginal =  imread([rutaImagenes, '\', imagenes{iter}]);
     [h, w, p] = size(imagenOriginal);
-    imagen = imfilter(imagenOriginal,fspecial('average',3));
+   % imagen = imfilter(imagenOriginal,fspecial('average',3));
+    imagen = imagenOriginal;
     if espacio(2)
         imagen = rgb2lab(imagen);
     elseif espacio(3)
@@ -44,7 +45,7 @@ for iter = 26:26
 %         [Clases, Centroides, ~, ~] = kmeans(double(patrones), k,'MaxIter', 200,'Distance', 'sqeuclidean', 'Start', initialCentroids,'EmptyAction','singleton');
 %     end
     %% calcular valor de umbral para criterio de agrupamiento
-    tolerancia = obtenerUmbral(Centroides, k, 1.8, 1.5, 0.05);
+    tolerancia = obtenerUmbral(Centroides, k, 25, 0.0005, 0.05);
 %   tolerancia = 9.562263;
     %% Agrupar colores algoritmo propuesto
     if espacio(1)
@@ -53,7 +54,7 @@ for iter = 26:26
         [ColoresResultantes, nI]= getImageRegion(Clases, Centroides, tolerancia, k, 1);
             disp('fin de recalculando centroides')
     elseif espacio(3)
-        [ColoresResultantes, nI]= getImageRegionHSV(Clases, Centroides, tolerancia, k, 3);
+        [ColoresResultantes, nI]= getImageRegionHSV(Clases, Centroides, tolerancia, k, 1);
     end
     
     %% Reconstruir imagen a partir de centroides y clases
