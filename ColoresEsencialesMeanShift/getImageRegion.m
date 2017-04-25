@@ -19,7 +19,7 @@ function  [Centroides, I] = getImageRegion(ClasesIniciales, Centroides, Toleranc
     i = 1;
     j = 2;
     I = 0;
-    while  i < k && I < 7000000
+    while  i < k
         I = I + 1;
         %% Distance by DeltaE200 
         if fnDistancia == 1
@@ -61,9 +61,6 @@ function  [Centroides, I] = getImageRegion(ClasesIniciales, Centroides, Toleranc
                 i = i + 1;
                 j = i + 1;
             end
-        end
-        if(mod(I,100) == 0)
-            disp(I);
         end
     end
     Centroides = sortrows(DatosOrdenados, 5);
