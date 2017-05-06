@@ -19,16 +19,16 @@ function umbral = obtenerUmbral(centroides, k, divisor, minimo, maximo)
     diferencia = abs(promedio - desviacion) / divisor
     p = maximo / 4;
     if(diferencia > maximo)
-        umbral = diferencia / (kurt * 1.5)
+        umbral = diferencia / (kurt)
         disp(1)
     elseif(diferencia > (p * 3))
-        umbral = diferencia / (kurt)
+        umbral = diferencia / (kurt / 2)
         disp(2)
     elseif(diferencia > p && diferencia < (p * 2))
        umbral = diferencia / 0.8
        disp(3)
     elseif(diferencia < p)
-       umbral = diferencia / (desviacion * 2)%/200
+       umbral = diferencia / (desviacion / 20)%/200
        disp(4)
     else
         umbral = diferencia / 1.2

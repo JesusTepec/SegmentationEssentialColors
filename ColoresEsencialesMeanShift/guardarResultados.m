@@ -4,7 +4,7 @@ function guardarResultados(imagenFinal, segmentos, imaS, datos, rutaGuardar, rut
     imwrite(imagenFinal, [rutaGuardar, '\', imStr, num2str(iter), '.png']);
     imwrite(segmentos, [rutaGuardar, '\', imStr, num2str(iter), '-2', '.png']);
     imwrite(uint8(imaS), [rutaGuardar, '\', imStr, num2str(iter), '-ms', '.png']);
-%    saveas(fg1,[rutaGuardar, '\', imStr, num2str(iter), '-3'], 'png');
+%     saveas(fg1,[rutaGuardar, '\', imStr, num2str(iter), '-3'], 'png');
     saveas(fg2,[rutaGuardar, '\', imStr, num2str(iter), '-4'], 'png');
     fo = fopen([rutaGuardar,'\', imStr, '.txt'], 'w');
     fprintf(fo, '%s %f \n\r', 'Tolerancia:', datos(1));
